@@ -1,12 +1,13 @@
 from openpyxl import load_workbook, Workbook
 import re
+import os
 
 prompt = input("Enter Company name")
 
 new_wb = Workbook()
 new_sheet = new_wb.active
 
-workbook = load_workbook("../files/testfile.xlsx")
+workbook = load_workbook(os.path.realpath("files/testfile.xlsx"))
 
 def write_to_file(row, name):
     data = []
