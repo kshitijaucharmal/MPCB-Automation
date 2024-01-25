@@ -17,27 +17,43 @@ class MainWindow(QtWidgets.QMainWindow):
         self.layout = QtWidgets.QGridLayout()
         self.central_widget.setLayout(self.layout)
 
+        self.testfile_label = QtWidgets.QLabel("Test File Location:")
+        self.testfile_textbox = QtWidgets.QLineEdit()
+        self.browse_testfile_button = QtWidgets.QPushButton("Browse")
+        self.browse_testfile_button.clicked.connect(self.browse_testfile)
+
         self.company_name_label = QtWidgets.QLabel("Company Name:")
         self.company_name_textbox = QtWidgets.QLineEdit()
 
         self.generate_button = QtWidgets.QPushButton("Generate")
         self.generate_button.clicked.connect(self.generate_file)
 
-        # self.save_file_button = QtWidgets.QPushButton("Save File")
-        # self.save_file_button.clicked.connect(self.save_file)
+        self.layout.addWidget(self.testfile_label, 0, 0)
+        self.layout.addWidget(self.testfile_textbox, 0, 1)
+        self.layout.addWidget(self.browse_testfile_button, 0, 2)
 
-        self.layout.addWidget(self.company_name_label, 0, 0)
-        self.layout.addWidget(self.company_name_textbox, 0, 1)
-        self.layout.addWidget(self.generate_button, 1, 0, 1, 2)
-        # self.layout.addWidget(self.save_file_button, 2, 0, 1, 2)
+        self.layout.addWidget(self.company_name_label, 1, 0)
+        self.layout.addWidget(self.company_name_textbox, 1, 1)
+        self.layout.addWidget(self.generate_button, 2, 0, 1, 2)
+
+    def browse_testfile(self):
+        filename, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select Test File", "", "Excel Files (*.xlsx)")
+
+        if filename:
+            self.testfile_textbox.setText(filename)
 
     def generate_file(self):
+        testfile_location = self.testfile_textbox.text()
         company_name = self.company_name_textbox.text()
+
+        if not testfile_location:
+            QtWidgets.QMessageBox.warning(self, "Error", "Please select a test file.")
+            return
 
         new_wb = Workbook()
         new_sheet = new_wb.active
 
-        workbook = load_workbook(os.path.realpath("files/testfile.xlsx"))
+        workbook = load_workbook(os.path.realpath(testfile_location))
 
         def write_to_file(row, name):
             data = []
@@ -66,6 +82,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if filename:
             self.new_wb.save(filename=filename)
+            QtWidgets.QMessageBox.information(self, "Success", "File saved successfully.")
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
