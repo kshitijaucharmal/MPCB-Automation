@@ -1,59 +1,50 @@
-import sys
-from PyQt6 import QtWidgets, QtGui
-from openpyxl import load_workbook, Workbook
+import tkinter as tk
+import tkinter.filedialog as fd
+import openpyxl
 import re
 import os
 
-class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self):
-        super().__init__()
+class MainWindow:
+    def __init__(self, root):
+        self.root = root
+        root.title("Company Data Extractor")
+        root.minsize(600, 400)
 
-        self.setWindowTitle("Company Data Extractor")
-        self.setMinimumSize(600, 400)
+        self.testfile_label = tk.Label(root, text="Test File Location:")
+        self.testfile_textbox = tk.Entry(root)
+        self.browse_testfile_button = tk.Button(root, text="Browse", command=self.browse_testfile)
 
-        self.central_widget = QtWidgets.QWidget()
-        self.setCentralWidget(self.central_widget)
+        self.company_name_label = tk.Label(root, text="Company Name:")
+        self.company_name_textbox = tk.Entry(root)
 
-        self.layout = QtWidgets.QGridLayout()
-        self.central_widget.setLayout(self.layout)
+        self.generate_button = tk.Button(root, text="Generate", command=self.generate_file)
 
-        self.testfile_label = QtWidgets.QLabel("Test File Location:")
-        self.testfile_textbox = QtWidgets.QLineEdit()
-        self.browse_testfile_button = QtWidgets.QPushButton("Browse")
-        self.browse_testfile_button.clicked.connect(self.browse_testfile)
+        self.testfile_label.grid(row=0, column=0)
+        self.testfile_textbox.grid(row=0, column=1)
+        self.browse_testfile_button.grid(row=0, column=2)
 
-        self.company_name_label = QtWidgets.QLabel("Company Name:")
-        self.company_name_textbox = QtWidgets.QLineEdit()
-
-        self.generate_button = QtWidgets.QPushButton("Generate")
-        self.generate_button.clicked.connect(self.generate_file)
-
-        self.layout.addWidget(self.testfile_label, 0, 0)
-        self.layout.addWidget(self.testfile_textbox, 0, 1)
-        self.layout.addWidget(self.browse_testfile_button, 0, 2)
-
-        self.layout.addWidget(self.company_name_label, 1, 0)
-        self.layout.addWidget(self.company_name_textbox, 1, 1)
-        self.layout.addWidget(self.generate_button, 2, 0, 1, 2)
+        self.company_name_label.grid(row=1, column=0)
+        self.company_name_textbox.grid(row=1, column=1)
+        self.generate_button.grid(row=2, column=0, columnspan=2)
 
     def browse_testfile(self):
-        filename, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Select Test File", "", "Excel Files (*.xlsx)")
+        filename = fd.askopenfilename(initialdir=".", title="Select Test File", filetypes=(("Excel Files", "*.xlsx"),))
 
         if filename:
-            self.testfile_textbox.setText(filename)
+            self.testfile_textbox.insert(0, filename)
 
     def generate_file(self):
-        testfile_location = self.testfile_textbox.text()
-        company_name = self.company_name_textbox.text()
+        testfile_location = self.testfile_textbox.get()
+        company_name = self.company_name_textbox.get()
 
         if not testfile_location:
-            QtWidgets.QMessageBox.warning(self, "Error", "Please select a test file.")
+            tk.messagebox.showwarning("Error", "Please select a test file.")
             return
 
-        new_wb = Workbook()
+        new_wb = openpyxl.Workbook()
         new_sheet = new_wb.active
 
-        workbook = load_workbook(os.path.realpath(testfile_location))
+        workbook = openpyxl.load_workbook(os.path.realpath(testfile_location))
 
         def write_to_file(row, name):
             data = []
@@ -78,17 +69,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self.save_file()
 
     def save_file(self):
-        filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Save File", f"{self.company_name}.xlsx")
+        filename = fd.asksaveasfilename(initialdir=".", title="Save File", filetypes=(("Excel Files", "*.xlsx"),))
 
         if filename:
             self.new_wb.save(filename=filename)
-            QtWidgets.QMessageBox.information(self, "Success", "File saved successfully.")
+            tk.messagebox.showinfo("Success", "File saved successfully.")
 
 def main():
-    app = QtWidgets.QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    app.exec()
+    root = tk.Tk()
+    window = MainWindow(root)
+    root.mainloop()
 
 if __name__ == "__main__":
     main()
+
