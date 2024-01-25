@@ -23,13 +23,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.generate_button = QtWidgets.QPushButton("Generate")
         self.generate_button.clicked.connect(self.generate_file)
 
-        self.save_file_button = QtWidgets.QPushButton("Save File")
-        self.save_file_button.clicked.connect(self.save_file)
+        # self.save_file_button = QtWidgets.QPushButton("Save File")
+        # self.save_file_button.clicked.connect(self.save_file)
 
         self.layout.addWidget(self.company_name_label, 0, 0)
         self.layout.addWidget(self.company_name_textbox, 0, 1)
         self.layout.addWidget(self.generate_button, 1, 0, 1, 2)
-        self.layout.addWidget(self.save_file_button, 2, 0, 1, 2)
+        # self.layout.addWidget(self.save_file_button, 2, 0, 1, 2)
 
     def generate_file(self):
         company_name = self.company_name_textbox.text()
@@ -58,6 +58,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.new_wb = new_wb
         self.company_name = company_name
+
+        self.save_file()
 
     def save_file(self):
         filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Save File", f"{self.company_name}.xlsx")
