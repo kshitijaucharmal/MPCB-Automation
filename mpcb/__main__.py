@@ -6,7 +6,7 @@ prompt = "varroc"
 new_wb = Workbook()
 new_sheet = new_wb.active
 
-workbook = load_workbook("testfile.xlsx")
+workbook = load_workbook("../files/testfile.xlsx")
 
 def write_to_file(row, name):
     data = []
