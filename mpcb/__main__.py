@@ -1,7 +1,7 @@
 from openpyxl import load_workbook, Workbook
 import re
 
-prompt = "varroc"
+prompt = input("Enter Company name")
 
 new_wb = Workbook()
 new_sheet = new_wb.active
